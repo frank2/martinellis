@@ -202,7 +202,7 @@ class CIDR(object):
             return V4CIDR.from_string(cidr)
         except address.AddressError:
             return V6CIDR.from_string(cidr)
-        except address.Addressrror:
+        except address.AddressError:
             raise CIDRError('could not parse cidr string blindly')
 
 class V4CIDR(CIDR):
