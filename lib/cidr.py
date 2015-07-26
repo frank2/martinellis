@@ -151,7 +151,6 @@ class CIDR(object):
             addresses = xlongrange(lower_address, upper_address)
 
         for address_obj in addresses:
-            print address_obj
             yield self[address_obj]
 
     def __contains__(self, element):
@@ -319,7 +318,6 @@ class BaseCIDRSet(sets.BaseSet):
 
             raise StopIteration
 
-        print map(lambda x: x.random, self.network_set())
         network_iterators = map(iter, self.network_set())
 
         if self.random:
