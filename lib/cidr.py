@@ -181,7 +181,7 @@ class CIDR(object):
         address_obj = address_class.from_string(split_cidr.pop(0))
         
         if not len(split_cidr):
-            prefix = getattr(cls, 'MAX', None)
+            prefix = getattr(address_class, 'MAX', None)
 
             if prefix is None:
                 raise CIDRError('address class provides no maximum bitrange')
