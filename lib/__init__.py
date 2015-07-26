@@ -21,6 +21,7 @@ def xrandrange(start=None, stop=None):
 
     if not start is None and stop is None:
         stop = start
+        start = 0
         
     if start is None:
         start = 0
