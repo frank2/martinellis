@@ -16,12 +16,12 @@ def xlongrange(start=None, stop=None):
 def xrandrange(start=None, stop=None):
     import random
 
-    if stop is None:
-        raise ValueError('no stop point specified specified')
+    if start is None and stop is None:
+        raise ValueError('no stop point specified')
 
     if not start is None and stop is None:
         stop = start
-
+        
     if start is None:
         start = 0
 
