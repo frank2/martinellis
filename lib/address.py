@@ -304,7 +304,7 @@ class V6Address(Address):
                 if string_iter+1 >= len(str_val):
                     raise AddressError('unexpected termination of IPv6 string')
 
-                next_val = str_val[string_iter]
+                next_val = str_val[string_iter+1]
 
                 if len(left_side + right_side) > 8:
                     raise AddressError('too many sextets in address')
