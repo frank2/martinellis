@@ -33,15 +33,29 @@ def xrandrange(start=None, stop=None):
 
     while len(ranges):
         range_tup = ranges.pop(0)
+        range_input = None
 
         if len(range_tup) == 1:
-            yield range_tup[0]
+            range_value = range_tup[0]
+        else:
+            range_value = random.randrange(*range_tup)
+
+        range_input = yield range_value
+
+        if range_input is None:
+            pass
+        elif not isinstance(range_input, tuple):
+            raise ValueError('input to xrandrange must be a tuple of numbers')
+        else:
+            if len(range_input) == 1:
+                ranges.insert(0, range_input)
+            else:
+                ranges.append(range_input)
+
+        if len(range_tup) == 1:
             continue
 
         range_start, range_stop = range_tup
-        range_value = random.randrange(range_start, range_stop)
-        yield range_value
-
         lower_start = range_start
         lower_stop = range_value
 
@@ -72,8 +86,30 @@ def xrandrange(start=None, stop=None):
             ranges.append((upper_start, upper_stop))
 
 def randiter(iterable):
-    for index in xrandrange(len(iterable)):
-        yield iterable[index]
+    send_queue = list()
+    iter_len = len(iterable)
+    iter_range = xrandrange(iter_len)
+
+    while 1:
+        if len(send_queue):
+            receive = yield send_queue.pop()
+
+            if not receive is None:
+                send_queue.append(receive)
+
+            continue
+                
+        if not len(iterable) == iter_len:
+            new_iter_len = len(iterable)
+            iter_value = iter_range.send((iter_len, new_iter_len))
+            iter_len = new_iter_len
+        else:
+            iter_value = iter_range.next()
+            
+        receive = yield iterable[iter_value]
+
+        if not receive is None:
+            send_queue.append(receive)
 
 from . import address
 from . import cidr
