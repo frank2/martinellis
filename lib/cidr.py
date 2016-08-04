@@ -30,7 +30,7 @@ class CIDR(object):
         if not issubclass(self.address_class, address.Address):
             raise CIDRError('address_class must implement Address')
         
-        if kwargs.has_key('cidr'):
+        if 'cidr' in kwargs:
             new_object = self.__class__.from_string(kwargs['cidr'])
             kwargs['address'] = new_object.address
             kwargs['prefix'] = new_object.prefix
@@ -43,7 +43,7 @@ class CIDR(object):
         if self.address is None:
             raise CIDRError('no base address provided')
         
-        if isinstance(self.address, basestring):
+        if isinstance(self.address, str):
             self.address = self.address_class.from_string(self.address)
 
         if not isinstance(self.address, self.address_class):
@@ -52,7 +52,7 @@ class CIDR(object):
         if self.prefix is None:
             raise CIDRError('no network prefix provided')
 
-        if not isinstance(self.prefix, (int, long)):
+        if not isinstance(self.prefix, int):
             raise CIDRError('prefix must be an integer')
 
     def netmask(self):
@@ -255,13 +255,13 @@ class CIDRSet(set):
         if not isinstance(other, (address.Address, CIDR)):
             raise CIDRSetError('can only get membership of Address or CIDR types')
         
-        return len(filter(lambda x: x << other, self.network_set())) > 0
+        return len([x for x in self.network_set() if x << other]) > 0
 
     def __rshift__(self, other):
         if not isinstance(other, (address.Address, CIDR)):
             raise CIDRSetError('can only get membership of Address or CIDR types')
         
-        return len(filter(lambda x: x >> other, self.network_set())) > 0
+        return len([x for x in self.network_set() if x >> other]) > 0
 
     def __rlshift__(self, other):
         return self >> other
@@ -282,9 +282,9 @@ class CIDRSet(set):
             raise StopIteration
 
         if self.random:
-            network_iterators = map(randiter, networks)
+            network_iterators = list(map(randiter, networks))
         else:
-            network_iterators = map(iter, networks)
+            network_iterators = list(map(iter, networks))
 
         while len(network_iterators):
             if not self.random:
@@ -299,7 +299,7 @@ class CIDRSet(set):
             iterator = network_iterators[index]
 
             try:
-                yield iterator.next()
+                yield next(iterator)
             except StopIteration:
                 network_iterators.pop(index)
                 continue

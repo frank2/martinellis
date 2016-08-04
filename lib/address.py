@@ -20,7 +20,7 @@ class Address:
         if self.max is None:
             raise AddressError('a maximum bitrange must be provided')
 
-        if not isinstance(self.value, (int, long)):
+        if not isinstance(self.value, int):
             raise AddressError('value must be an integer')
 
     def __int__(self):
@@ -39,18 +39,18 @@ class Address:
         return cmp(self.value, other.value)
 
     def __and__(self, other):
-        if not isinstance(other, (Address, int, long)):
+        if not isinstance(other, (Address, int)):
             raise AddressError('and operation must be performed on another address or an int')
 
-        new_object = dict(self.__dict__.items()[:])
+        new_object = dict(list(self.__dict__.items())[:])
         new_object['value'] = int(other & self.value)
         return self.__class__(**new_object)
 
     def __rand__(self, other):
-        if not isinstance(other, (Address, int, long)):
+        if not isinstance(other, (Address, int)):
             raise AddressError('and operation must be performed on another address or an int')
 
-        new_object = dict(self.__dict__.items()[:])
+        new_object = dict(list(self.__dict__.items())[:])
         new_object['value'] = int(self.value & other)
         return self.__class__(**new_object)
 
@@ -59,18 +59,18 @@ class Address:
         return self
 
     def __or__(self, other):
-        if not isinstance(other, (Address, int, long)):
+        if not isinstance(other, (Address, int)):
             raise AddressError('or operation must be performed on another address or an int')
 
-        new_object = dict(self.__dict__.items()[:])
+        new_object = dict(list(self.__dict__.items())[:])
         new_object['value'] = int(other | self.value)
         return self.__class__(**new_object)
 
     def __ror__(self, other):
-        if not isinstance(other, (Address, int, long)):
+        if not isinstance(other, (Address, int)):
             raise AddressError('and operation must be performed on another address or an int')
 
-        new_object = dict(self.__dict__.items()[:])
+        new_object = dict(list(self.__dict__.items())[:])
         new_object['value'] = int(self.value | other)
         return self.__class__(**new_object)
 
@@ -79,18 +79,18 @@ class Address:
         return self
 
     def __add__(self, other):
-        if not isinstance(other, (int, long)):
+        if not isinstance(other, int):
             raise AddressError('address objects can only be added with int objects')
 
-        new_object = dict(self.__dict__.items()[:])
+        new_object = dict(list(self.__dict__.items())[:])
         new_object['value'] = self.value + other
         return self.__class__(**new_object)
 
     def __radd__(self, other):
-        if not isinstance(other, (int, long)):
+        if not isinstance(other, int):
             raise AddressError('address objects can only be added with int objects')
 
-        new_object = dict(self.__dict__.items()[:])
+        new_object = dict(list(self.__dict__.items())[:])
         new_object['value'] = other + self.value
         return self.__class__(**new_object)
 
@@ -99,18 +99,18 @@ class Address:
         return self
 
     def __sub__(self, other):
-        if not isinstance(other, (int, long)):
+        if not isinstance(other, int):
             raise AddressError('address objects can only be subtracted by int objects')
 
-        new_object = dict(self.__dict__.items()[:])
+        new_object = dict(list(self.__dict__.items())[:])
         new_object['value'] = self.value - other
         return self.__class__(**new_object)
 
     def __rsub__(self, other):
-        if not isinstance(other, (int, long)):
+        if not isinstance(other, int):
             raise AddressError('address objects can only be subtracted by int objects')
 
-        new_object = dict(self.__dict__.items()[:])
+        new_object = dict(list(self.__dict__.items())[:])
         new_object['value'] = other - self.value
         return self.__class__(**new_object)
 
