@@ -4,7 +4,6 @@ import copy
 import os
 import random
 import re
-import sets
 
 from . import address
 from . import randiter, xrandrange, xlongrange
@@ -210,65 +209,44 @@ class V4CIDR(CIDR):
 class V6CIDR(CIDR):
     ADDRESS_CLASS = address.V6Address
 
-class BaseCIDRSet(sets.BaseSet):
+class CIDRSet(set):
     INCLUSIVE = False
     RANDOM = False
     ADDRESSES = False
-    CIDRS = None
     
     def __init__(self, *args, **kwargs):
         self.inclusive = kwargs.setdefault('inclusive', self.INCLUSIVE)
         self.random = kwargs.setdefault('random', self.RANDOM)
         self.addresses = kwargs.setdefault('addresses', self.ADDRESSES)
-        self._data = dict()
-        
-        cidrs = kwargs.setdefault('cidrs', self.CIDRS)
 
-        if cidrs is None:
-            cidrs = args
-
-        sets.BaseSet.__init__(self) 
-        
-        if not cidrs is None:
-            self.update(cidrs)
-
-    def _update(self, iterable):
-        sanitized = list()
-        for element in iterable:
-            if not isinstance(element, CIDR):
-                raise CIDRSetError('set element must be a CIDR object')
-
-            new_element = copy.copy(element)
-            new_element.random = self.random
-            new_element.inclusive = self.inclusive
-
-            sanitized.append(new_element)
-
-        return super(BaseCIDRSet, self)._update(sanitized)
-
-    def _member_intercept(self, function, member):
-        if not isinstance(member, CIDR):
-            raise CIDRSetError('set member must be a CIDR object')
-
-        return function(member)
-
-    def _set_intercept(self, function, other):
-        if not isinstance(member, CIDRSet):
-            raise CIDRSetError('set must be a CIDRSet object')
-
-        return function(other)
+        set.__init__(self, args)
 
     def address_length(self):
         return sum(map(len, self.network_set()))
 
     def network_set(self):
-        return set(self._data.keys())
+        return set(super(CIDRSet, self).__iter__())
 
     def copy(self):
         return self.__class__(*self.network_set(), **self.__dict__)
 
-    def __getitem__(self, index):
-        return self._data.keys()[index]
+    def add(self, element):
+        if not isinstance(element, CIDR):
+            raise CIDRSetError('element must be a CIDR object')
+
+        super(CIDRSet, self).add(element)
+
+    def remove(self, element):
+        if not isinstance(element, CIDR):
+            raise CIDRSetError('element must be a CIDR object')
+
+        super(CIDRSet, self).remove(element)
+
+    def discard(self, element):
+        if not isinstance(element, CIDR):
+            raise CIDRSetError('element must be a CIDR object')
+
+        super(CIDRSet, self).discard(element)
 
     def __copy__(self):
         return self.copy()
@@ -291,89 +269,37 @@ class BaseCIDRSet(sets.BaseSet):
     def __rrshift__(self, other):
         return self << other
 
-    def __getattr__(self, attr):
-        member_funcs = ['__contains__']
-        set_funcs = ['__eq__', '__ne__', 'union', 'intersection'
-                     ,'symmetric_difference', 'difference', 'issubset'
-                     ,'issuperset',]
-
-        if attr in member_funcs:
-            ghost_func = (lambda x: self._member_intercept(self.__dict__[attr], x))
-        elif attr in set_funcs:
-            ghost_func = (lambda x: self._set_intercept(self.__dict__[attr], x))
-        else:
-            return self.__dict__[attr]
-
-        return ghost_func
-
     def __iter__(self):
-        if not self.addresses:
-            if self.random:
-                network_iter = randiter(list(self.network_set()))
-            else:
-                network_iter = iter(self.network_set())
+        networks = list(self.network_set())
+        
+        if self.random:
+            random.shuffle(networks)
 
-            for network in network_iter:
+        if not self.addresses:
+            for network in networks:
                 yield network
 
             raise StopIteration
 
-        network_iterators = map(iter, self.network_set())
-
         if self.random:
-            while len(network_iterators):
-                index = random.randrange(0, len(network_iterators))
-                iterator = network_iterators[index]
-
-                try:
-                    yield iterator.next()
-                except StopIteration:
-                    network_iterators.pop(index)
-                    continue
+            network_iterators = map(randiter, networks)
         else:
-            for network in network_iterators:
-                for address in network:
+            network_iterators = map(iter, networks)
+
+        while len(network_iterators):
+            if not self.random:
+                iterator = network_iterators.pop(0)
+
+                for address in iterator:
                     yield address
 
-class ImmutableCIDRSet(sets.ImmutableSet, BaseCIDRSet):
-    def __init__(self, *args, **kwargs):
-        BaseCIDRSet.__init__(self, *args, **kwargs)
-        sets.ImmutableSet.__init__(self, iterable=args)
+                continue
+            
+            index = random.randrange(0, len(network_iterators))
+            iterator = network_iterators[index]
 
-class CIDRSet(sets.Set, BaseCIDRSet):
-    def __init__(self, *args, **kwargs):
-        BaseCIDRSet.__init__(self, *args, **kwargs)
-        sets.Set.__init__(self, iterable=args)
-
-    def add(self, element):
-        if not isinstance(element, CIDR):
-            raise CIDRSetError('element to add must be a CIDR object')
-
-        if len(filter(lambda x: x >> element, self._data.keys())):
-            return
-
-        element = copy.copy(element)
-        element.random = self.random
-        element.inclusive = self.inclusive
-        
-        return super(CIDRSet, self).add(element)
-
-    def remove(self, element):
-        if not isinstance(element, CIDR):
-            raise CIDRSetError('element to remove must be a CIDR object')
-
-        return super(CIDRSet, self).remove(element)
-
-    def __as_immutable__(self):
-        return ImmutableCIDRSet(*self, **self.__dict__)
-
-    def __as_temporarily_immutable__(self):
-        return _TemporarilyImmutableCIDRSet(*self, **self.__dict__)
-
-class _TemporarilyImmutableCIDRSet(sets._TemporarilyImmutableSet, BaseCIDRSet):
-    def __init__(self, set_obj, **kwargs):
-        BaseCIDRSet.__init__(self, *set_obj.network_set(), **kwargs)
-        sets._TemporarilyImmutableSet.__init__(self, set_obj.network_set())
-
-cset = CIDRSet
-frozencset = ImmutableCIDRSet
+            try:
+                yield iterator.next()
+            except StopIteration:
+                network_iterators.pop(index)
+                continue

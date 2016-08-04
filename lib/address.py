@@ -1,5 +1,8 @@
 #!/usr/bin/env python
 
+import socket
+import struct
+
 class AddressError(Exception):
     pass
 
@@ -144,222 +147,37 @@ class Address:
     def blind_assertion(address):
         try:
             return V4Address.from_string(address)
-        except AddressError:
+        except (AddressError, socket.error):
             return V6Address.from_string(address)
-        except AddressError:
+        except (AddressError, socket.error):
             raise AddressError('could not parse address blindly')
 
 class V4Address(Address):
     MAX = 32
     
     def __str__(self):
-        octets = list()
-        value = self.value
-
-        for i in xrange(4):
-            octets.append(value & 0xFF)
-            value >>= 8
-
-        return '.'.join(map(str, octets[::-1]))
+        struct_data = struct.pack('>L', self.value)
+        return socket.inet_ntop(socket.AF_INET, struct_data)
 
     @classmethod
     def from_string(cls, str_val):
-        octets = str_val.split('.')
+        struct_data = socket.inet_pton(socket.AF_INET, str_val)
+        int_data = struct.unpack('>L', struct_data)[0]
 
-        if len(octets) > 4:
-            raise AddressError('string value does not contain 4 or less octets')
-
-        try:
-            octets = map(int, octets)
-        except ValueError:
-            raise AddressError('non-integer found in octets')
-        
-        octets += [0] * (4 - len(octets))
-
-        if len(filter(lambda x: not (0 <= x <= 255), octets)):
-            raise AddressError('string contains octets not in range 0 <= x <= 255')
-
-        value = 0
-        
-        for octet in octets:
-            value <<= 8
-            value |= octet
-
-        return cls(value=value)
+        return cls(value=int_data)
 
 class V6Address(Address):
     MAX = 128
 
     def __str__(self):
-        sextets = list()
-        value = self.value
-
-        for i in xrange(8):
-            sextets.append(value & 0xFFFF)
-            value >>= 16
-
-        sextets.reverse()
-        zero_start = 0
-        zero_end = 0
-        i = 0
-
-        while i < 8:
-            if not sextets[i] == 0:
-                i += 1
-                continue
-
-            local_start = i
-            local_end = local_start
-            
-            for j in xrange(i+1, 8):
-                if not sextets[j] == 0:
-                    break
-
-                local_end = j
-
-            if i == j:
-                i += 1
-            else:
-                i = j
-
-            if local_end - local_start > zero_end - zero_start:
-                zero_start = local_start
-                zero_end = local_end
-
-        if zero_end - zero_start == 0:
-            zero_start = -1
-            
-        result = list()
-        i = 0
-
-        while i < 8:
-            if i == zero_start:
-                if len(result) and result[-1] == ':':
-                    result.pop()
-                    
-                result.append('::')
-                i = zero_end+1
-                continue
-
-            result.append('%x' % sextets[i])
-
-            i += 1
-
-            if not i == 8:
-                result.append(':')
-            
-        return ''.join(result)
+        struct_data = struct.pack('>QQ'
+                                  ,self.value >> 64
+                                  ,self.value & ((2 ** 64) - 1))
+        return socket.inet_ntop(socket.AF_INET6, struct_data)
 
     @classmethod
     def from_string(cls, str_val):
-        string_iter = 0
-        left_side = list()
-        right_side = list()
-        all_sides = [left_side, right_side]
-        current_side = 0
-
-        eof_state = -1
-        numeric_state = 0
-        colon_state = 1
-        swap_state = 2
-        hex_set = '0123456789abcdef'
-
-        current_sextet = -1
-        current_state = None
-
-        while string_iter <= len(str_val):
-            if not string_iter == len(str_val):
-                c = str_val[string_iter].lower()
-            else:
-                c = None
-
-            if current_state is None:
-                current_sextet = -1
-                
-                if string_iter == len(str_val):
-                    current_state = eof_state
-                elif c in hex_set:
-                    current_sextet = 0
-                    current_state = numeric_state
-                elif c == ':':
-                    current_state = colon_state
-                else:
-                    raise AddressError('unexpected character in IPv6 string')
-            elif current_state == numeric_state:
-                if c is None: # hit eof during numeric parsing
-                    current_state = eof_state
-                elif c in hex_set:
-                    current_sextet <<= 4
-
-                    if current_sextet >= 2 ** 16:
-                        raise AddressError('sextet contains too many characters')
-
-                    current_sextet |= int(c, 16)
-                    string_iter += 1
-                elif c == ':':
-                    current_state = colon_state
-                else:
-                    raise AddressError('unexpected character in IPv6 string')
-            elif current_state == colon_state:
-                if string_iter+1 >= len(str_val):
-                    raise AddressError('unexpected termination of IPv6 string')
-
-                next_val = str_val[string_iter+1]
-
-                if len(left_side + right_side) > 8:
-                    raise AddressError('too many sextets in address')
-
-                if current_sextet == -1 and string_iter == 0:
-                    pass
-                elif not current_sextet == -1:
-                    all_sides[current_side].append(current_sextet)
-                    current_sextet = -1
-                else:
-                    raise AddressError('unexpected sextet partition')
-                
-                if next_val == ':':
-                    current_state = swap_state
-                else:
-                    current_state = None
-                
-                string_iter += 1
-            elif current_state == swap_state:
-                if current_side == 1:
-                    raise AddressError('IPv6 string can only have one zero padding section')
-
-                string_iter += 1
-                current_side += 1
-                current_state = None
-
-                if string_iter >= len(str_val):
-                    continue
-                
-                peek = str_val[string_iter]
-
-                if not peek in hex_set:
-                    raise AddressError('unexpected delimiter in IPv6 string')
-            elif current_state == eof_state:
-                if current_sextet == -1:
-                    break
-
-                if len(left_side + right_side) > 8:
-                    raise AddressError('too many sextets in address')
-
-                all_sides[current_side].append(current_sextet)
-                string_iter += 1
-
-        final_sextets = [0]*8
-
-        for sextet in xrange(len(left_side)):
-            final_sextets[sextet] = left_side[sextet]
-
-        for sextet in xrange(len(right_side)):
-            final_sextets[~sextet] = right_side[~sextet]
-
-        final_value = 0
-
-        for sextet in final_sextets:
-            final_value <<= 16
-            final_value |= sextet
-
-        return cls(value=final_value)
+        struct_data = socket.inet_pton(socket.AF_INET6, str_val)
+        int_data = struct.unpack('>QQ', struct_data)
+        lhs, rhs = int_data
+        return cls(value=lhs << 64 | rhs)

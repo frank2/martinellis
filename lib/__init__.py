@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+
 def xlongrange(start=None, stop=None):
     if stop is None:
         raise ValueError('no stop point specified')
@@ -111,12 +112,12 @@ def randiter(iterable):
         if not receive is None:
             send_queue.append(receive)
 
-from . import address
-from . import cidr
+from martinellis import address
+from martinellis import cidr
 
-from address import *
-from cidr import *
+from martinellis.address import *
+from martinellis.cidr import *
 
 __all__ = ['.', 'randiter', 'xrandrange', 'xlongrange', 'address', 'cidr'
            ,'Address' ,'V4Address', 'V6Address', 'CIDR', 'V4CIDR', 'V6CIDR'
-           ,'BaseCIDRSet' ,'ImmutableCIDRSet', 'CIDRSet', 'cset', 'frozencset']
+           ,'CIDRSet']
