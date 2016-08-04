@@ -105,7 +105,7 @@ def randiter(iterable):
             iter_value = iter_range.send((iter_len, new_iter_len))
             iter_len = new_iter_len
         else:
-            iter_value = iter_range.next()
+            iter_value = next(iter_range)
             
         receive = yield iterable[iter_value]
 
