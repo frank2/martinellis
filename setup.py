@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 
-from setuptools import setup, find_packages
+from setuptools import setup
 
 setup(
     name = 'martinellis'
-    ,version = '1.0'
+    ,version = '1.0.0'
     ,author = 'frank2'
     ,author_email = 'frank2@dc949.org'
     ,description = 'A python library for manipulating IPv4 and IPv6 addresses.'
