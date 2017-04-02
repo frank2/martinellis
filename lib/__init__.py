@@ -1,6 +1,12 @@
 #!/usr/bin/env python
 
 def xlongrange(start=None, stop=None):
+    '''
+Creates a range iterator similar to xrange, but for large numbers. Works
+pretty much like the range() function, in that it generates a range from 
+0 -> *start* non-inclusive if *stop* is not specified, or *start* -> *stop*
+non-inclusive if it is.'''
+    
     if stop is None:
         raise ValueError('no stop point specified')
 
@@ -15,6 +21,19 @@ def xlongrange(start=None, stop=None):
         start += 1
     
 def xrandrange(start=None, stop=None):
+    '''
+Produces an iterator similiar to xrange with the interface of range. 
+The iterator yields random numbers from 0 <= x < *start* if *stop* is not
+specified, or *start* <= x < *stop* if it is. Here's an example of xrandrange::
+
+   >>> list(xrandrange(10))
+   [2, 1, 0, 7, 4, 3, 8, 5, 9, 6]
+   >>> list(xrandrange(10, 20))
+   [11, 10, 16, 13, 12, 17, 14, 18, 15, 19]
+
+
+'''
+    
     import random
 
     if start is None and stop is None:
@@ -87,6 +106,10 @@ def xrandrange(start=None, stop=None):
             ranges.append((upper_start, upper_stop))
 
 def randiter(iterable):
+    '''
+Create an iterator that yields random elements from the iterable object 
+*iterable*.'''
+    
     send_queue = list()
     iter_len = len(iterable)
     iter_range = xrandrange(iter_len)
