@@ -13,6 +13,7 @@ setup(
     ,url = 'https://github.com/frank2/martinellis'
     ,package_dir = {'martinellis': 'lib'}
     ,packages = ['martinellis']
+    ,install_requires = ['hotmic>=0.1.1']
     ,long_description = '''Martinellis-- named after the famous brand of cider-- is a library for manipulating
 IP addresses in various formats. It allows for arbitrary masking of addresses and can
 perform tasks such as randomization of a large ranges of addresses.'''

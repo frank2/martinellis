@@ -1,0 +1,486 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>2.2. CIDR module &#8212; martinellis 1.1.0 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '1.1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="prev" title="2.1. Address module" href="../address/index.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../address/index.html" title="2.1. Address module"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">martinellis 1.1.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">1. Martinellis package</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="cidr-module">
+<h1>2.2. CIDR module<a class="headerlink" href="#cidr-module" title="Permalink to this headline">¶</a></h1>
+<p>The CIDR module contains two primary class objects: the <code class="xref py py-class docutils literal"><span class="pre">CIDR</span></code> class and
+the <code class="xref py py-class docutils literal"><span class="pre">CIDRSet</span></code> class.</p>
+<div class="section" id="cidr-objects">
+<h2>2.2.1. CIDR objects<a class="headerlink" href="#cidr-objects" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="martinellis.cidr.CIDR">
+<em class="property">class </em><code class="descclassname">martinellis.cidr.</code><code class="descname">CIDR</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#martinellis.cidr.CIDR" title="Permalink to this definition">¶</a></dt>
+<dd><p>This is the base class for representing IP addresses in CIDR notation. It allows
+you to iterate over all addresses within the given network, either sequentially
+or randomly. It also gives you the ability to check for network membership of a
+given IP address.</p>
+<p>Class variables can be changed at the class definition to change the default
+behavior of the class. For example, this is how <code class="xref py py-class docutils literal"><span class="pre">V4CIDR</span></code> is
+implemented:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">V4CIDR</span><span class="p">(</span><span class="n">CIDR</span><span class="p">):</span>
+    <span class="n">ADDRESS_CLASS</span> <span class="o">=</span> <span class="n">address</span><span class="o">.</span><span class="n">V4Address</span>
+</pre></div>
+</div>
+<dl class="attribute">
+<dt id="martinellis.cidr.CIDR.ADDRESS">
+<code class="descname">ADDRESS</code><em class="property"> = None</em><a class="headerlink" href="#martinellis.cidr.CIDR.ADDRESS" title="Permalink to this definition">¶</a></dt>
+<dd><p>Either an instance of <a class="reference internal" href="#martinellis.cidr.CIDR.ADDRESS_CLASS" title="martinellis.cidr.CIDR.ADDRESS_CLASS"><code class="xref py py-attr docutils literal"><span class="pre">martinellis.cidr.CIDR.ADDRESS_CLASS</span></code></a> or
+a value that can be passed to the <em>value</em> argument of its constructor.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="martinellis.cidr.CIDR.ADDRESS_CLASS">
+<code class="descname">ADDRESS_CLASS</code><em class="property"> = None</em><a class="headerlink" href="#martinellis.cidr.CIDR.ADDRESS_CLASS" title="Permalink to this definition">¶</a></dt>
+<dd><p>A class type that implements <a class="reference internal" href="../address/index.html#martinellis.address.Address" title="martinellis.address.Address"><code class="xref py py-class docutils literal"><span class="pre">martinellis.address.Address</span></code></a>. An
+exception is raised otherwise.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="martinellis.cidr.CIDR.INCLUSIVE">
+<code class="descname">INCLUSIVE</code><em class="property"> = True</em><a class="headerlink" href="#martinellis.cidr.CIDR.INCLUSIVE" title="Permalink to this definition">¶</a></dt>
+<dd><p>Indicate whether to include the ends of the network. See
+<a class="reference internal" href="#martinellis.cidr.CIDR.__init__" title="martinellis.cidr.CIDR.__init__"><code class="xref py py-func docutils literal"><span class="pre">martinellis.cidr.CIDR.__init__()</span></code></a> for details.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="martinellis.cidr.CIDR.PREFIX">
+<code class="descname">PREFIX</code><em class="property"> = None</em><a class="headerlink" href="#martinellis.cidr.CIDR.PREFIX" title="Permalink to this definition">¶</a></dt>
+<dd><p>The numerical prefix of the network mask.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="martinellis.cidr.CIDR.RANDOM">
+<code class="descname">RANDOM</code><em class="property"> = False</em><a class="headerlink" href="#martinellis.cidr.CIDR.RANDOM" title="Permalink to this definition">¶</a></dt>
+<dd><p>Indicate whether to iterate over the network randomly.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="martinellis.cidr.CIDR.__contains__">
+<code class="descname">__contains__</code><span class="sig-paren">(</span><em>element</em><span class="sig-paren">)</span><a class="headerlink" href="#martinellis.cidr.CIDR.__contains__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if the <em>element</em> is either an address in the network or a subset
+network of the <a class="reference internal" href="#martinellis.cidr.CIDR" title="martinellis.cidr.CIDR"><code class="xref py py-class docutils literal"><span class="pre">martinellis.cidr.CIDR</span></code></a> object.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="martinellis.cidr.CIDR.__getitem__">
+<code class="descname">__getitem__</code><span class="sig-paren">(</span><em>index</em><span class="sig-paren">)</span><a class="headerlink" href="#martinellis.cidr.CIDR.__getitem__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calls <a class="reference internal" href="#martinellis.cidr.CIDR.get_address" title="martinellis.cidr.CIDR.get_address"><code class="xref py py-func docutils literal"><span class="pre">martinellis.cidr.CIDR.get_address()</span></code></a>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="martinellis.cidr.CIDR.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#martinellis.cidr.CIDR.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a CIDR object. Keyword arguments are:</p>
+<blockquote>
+<div><p><em>address_class</em>: The address class of address objects inside the CIDR object.
+This must implement <a class="reference internal" href="../address/index.html#martinellis.address.Address" title="martinellis.address.Address"><code class="xref py py-class docutils literal"><span class="pre">martinellis.address.Address</span></code></a>.</p>
+<p><em>address</em>: Either an instance of <a class="reference internal" href="#martinellis.cidr.CIDR.ADDRESS_CLASS" title="martinellis.cidr.CIDR.ADDRESS_CLASS"><code class="xref py py-attr docutils literal"><span class="pre">martinellis.cidr.CIDR.ADDRESS_CLASS</span></code></a>
+or a value that can be passed to the <em>value</em> argument of its constructor.</p>
+<p><em>prefix</em>: The network prefix of the given network.</p>
+<p><em>cidr</em>: A string value representing a CIDR-notated network, e.g.: &#8220;10.0.0.0/8.&#8221;
+This can be used in place of the <em>address</em> and <em>prefix</em> arguments.</p>
+<p><em>inclusive</em>: Indicate whether to include the ends of the network. For example,
+if you have a CIDR of 10.0.0.0/24, setting <em>inclusive</em> to <strong>True</strong> would also
+include the addresses 10.0.0.0 and 10.0.0.255 during iteration.</p>
+<p><em>random</em>: Randomize address values on iteration.</p>
+</div></blockquote>
+</dd></dl>
+
+<dl class="method">
+<dt id="martinellis.cidr.CIDR.__iter__">
+<code class="descname">__iter__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#martinellis.cidr.CIDR.__iter__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns an iterator of addresses within the network. Iteration is
+affected by the <em>random</em> and <em>inclusive</em> switches given to 
+<a class="reference internal" href="#martinellis.cidr.CIDR.__init__" title="martinellis.cidr.CIDR.__init__"><code class="xref py py-func docutils literal"><span class="pre">martinellis.cidr.CIDR.__init__()</span></code></a>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="martinellis.cidr.CIDR.__len__">
+<code class="descname">__len__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#martinellis.cidr.CIDR.__len__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Count how many addresses are in this object.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="martinellis.cidr.CIDR.__lshift__">
+<code class="descname">__lshift__</code><span class="sig-paren">(</span><em>other</em><span class="sig-paren">)</span><a class="headerlink" href="#martinellis.cidr.CIDR.__lshift__" title="Permalink to this definition">¶</a></dt>
+<dd><p>If <em>other</em> is a <a class="reference internal" href="#martinellis.cidr.CIDR" title="martinellis.cidr.CIDR"><code class="xref py py-class docutils literal"><span class="pre">martinellis.cidr.CIDR</span></code></a> object, check if
+<em>other</em> is a subset of the current object. If <em>other</em> is an
+<a class="reference internal" href="../address/index.html#martinellis.address.Address" title="martinellis.address.Address"><code class="xref py py-class docutils literal"><span class="pre">martinellis.address.Address</span></code></a> object, check if it is <strong>not</strong> a member
+of the network.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="martinellis.cidr.CIDR.__rshift__">
+<code class="descname">__rshift__</code><span class="sig-paren">(</span><em>other</em><span class="sig-paren">)</span><a class="headerlink" href="#martinellis.cidr.CIDR.__rshift__" title="Permalink to this definition">¶</a></dt>
+<dd><p>If <em>other</em> is a <a class="reference internal" href="#martinellis.cidr.CIDR" title="martinellis.cidr.CIDR"><code class="xref py py-class docutils literal"><span class="pre">martinellis.cidr.CIDR</span></code></a> object, check if
+<em>other</em> is a superset of the current object via
+<a class="reference internal" href="#martinellis.cidr.CIDR.is_superset_of" title="martinellis.cidr.CIDR.is_superset_of"><code class="xref py py-func docutils literal"><span class="pre">martinellis.cidr.CIDR.is_superset_of()</span></code></a>. If <em>other</em> is an 
+<a class="reference internal" href="../address/index.html#martinellis.address.Address" title="martinellis.address.Address"><code class="xref py py-class docutils literal"><span class="pre">martinellis.address.Address</span></code></a> object, check if it is a member of the
+network via <a class="reference internal" href="#martinellis.cidr.CIDR.has_address" title="martinellis.cidr.CIDR.has_address"><code class="xref py py-func docutils literal"><span class="pre">martinellis.cidr.CIDR.has_address()</span></code></a>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="martinellis.cidr.CIDR.__str__">
+<code class="descname">__str__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#martinellis.cidr.CIDR.__str__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a string representation of the CIDR object.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="martinellis.cidr.CIDR.__weakref__">
+<code class="descname">__weakref__</code><a class="headerlink" href="#martinellis.cidr.CIDR.__weakref__" title="Permalink to this definition">¶</a></dt>
+<dd><p>list of weak references to the object (if defined)</p>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="martinellis.cidr.CIDR.blind_assertion">
+<em class="property">static </em><code class="descname">blind_assertion</code><span class="sig-paren">(</span><em>cidr</em><span class="sig-paren">)</span><a class="headerlink" href="#martinellis.cidr.CIDR.blind_assertion" title="Permalink to this definition">¶</a></dt>
+<dd><p>Tries to convert the string into either a
+<a class="reference internal" href="#martinellis.cidr.V4CIDR" title="martinellis.cidr.V4CIDR"><code class="xref py py-class docutils literal"><span class="pre">martinellis.cidr.V4CIDR</span></code></a> or a <a class="reference internal" href="#martinellis.cidr.V6CIDR" title="martinellis.cidr.V6CIDR"><code class="xref py py-class docutils literal"><span class="pre">martinellis.cidr.V6CIDR</span></code></a>.
+Raises an exception if it can&#8217;t convert to either.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="martinellis.cidr.CIDR.broadcast_address">
+<code class="descname">broadcast_address</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#martinellis.cidr.CIDR.broadcast_address" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return an <a class="reference internal" href="../address/index.html#martinellis.address.Address" title="martinellis.address.Address"><code class="xref py py-class docutils literal"><span class="pre">martinellis.address.Address</span></code></a> object specified by the member
+variable <em>address_class</em> representing the broadcast address of the given network.
+Example:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">V4CIDR</span><span class="p">(</span><span class="n">cidr</span><span class="o">=</span><span class="s1">&#39;10.0.0.0/16&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">broadcast_address</span><span class="p">()</span>
+<span class="go">V4Address(10.0.255.255)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="martinellis.cidr.CIDR.from_string">
+<em class="property">classmethod </em><code class="descname">from_string</code><span class="sig-paren">(</span><em>cidr</em><span class="sig-paren">)</span><a class="headerlink" href="#martinellis.cidr.CIDR.from_string" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert a CIDR string into a <a class="reference internal" href="#martinellis.cidr.CIDR" title="martinellis.cidr.CIDR"><code class="xref py py-class docutils literal"><span class="pre">martinellis.cidr.CIDR</span></code></a>
+object.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="martinellis.cidr.CIDR.get_address">
+<code class="descname">get_address</code><span class="sig-paren">(</span><em>index</em><span class="sig-paren">)</span><a class="headerlink" href="#martinellis.cidr.CIDR.get_address" title="Permalink to this definition">¶</a></dt>
+<dd><p>Treat the network like an array and get the address at offset <em>index</em>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="martinellis.cidr.CIDR.has_address">
+<code class="descname">has_address</code><span class="sig-paren">(</span><em>address_obj</em><span class="sig-paren">)</span><a class="headerlink" href="#martinellis.cidr.CIDR.has_address" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if the given <em>address_obj</em> is a member of the network specified
+by the <a class="reference internal" href="#martinellis.cidr.CIDR" title="martinellis.cidr.CIDR"><code class="xref py py-class docutils literal"><span class="pre">martinellis.cidr.CIDR</span></code></a> object. The <em>address</em> object must be the
+same <a class="reference internal" href="../address/index.html#martinellis.address.Address" title="martinellis.address.Address"><code class="xref py py-class docutils literal"><span class="pre">martinellis.address.Address</span></code></a> object specified by the class&#8217;s 
+<em>address_class</em> variable.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="martinellis.cidr.CIDR.is_subset_of">
+<code class="descname">is_subset_of</code><span class="sig-paren">(</span><em>cidr_obj</em><span class="sig-paren">)</span><a class="headerlink" href="#martinellis.cidr.CIDR.is_subset_of" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if this <a class="reference internal" href="#martinellis.cidr.CIDR" title="martinellis.cidr.CIDR"><code class="xref py py-class docutils literal"><span class="pre">martinellis.cidr.CIDR</span></code></a> object is a subset of
+the given <em>cidr_obj</em>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="martinellis.cidr.CIDR.is_superset_of">
+<code class="descname">is_superset_of</code><span class="sig-paren">(</span><em>cidr_obj</em><span class="sig-paren">)</span><a class="headerlink" href="#martinellis.cidr.CIDR.is_superset_of" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if this <a class="reference internal" href="#martinellis.cidr.CIDR" title="martinellis.cidr.CIDR"><code class="xref py py-class docutils literal"><span class="pre">martinellis.cidr.CIDR</span></code></a> object is a superset of
+the given <em>cidr_obj</em>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="martinellis.cidr.CIDR.netmask">
+<code class="descname">netmask</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#martinellis.cidr.CIDR.netmask" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return an <a class="reference internal" href="../address/index.html#martinellis.address.Address" title="martinellis.address.Address"><code class="xref py py-class docutils literal"><span class="pre">martinellis.address.Address</span></code></a> object specified by the member
+variable <em>address_class</em> representing the netmask of the given network. Example:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">V4CIDR</span><span class="p">(</span><span class="n">cidr</span><span class="o">=</span><span class="s1">&#39;10.0.0.0/16&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">netmask</span><span class="p">()</span>
+<span class="go">V4Address(255.255.0.0)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="martinellis.cidr.CIDR.network_range">
+<code class="descname">network_range</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#martinellis.cidr.CIDR.network_range" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the number of possible addresses in this given network.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="martinellis.cidr.CIDR.routing_address">
+<code class="descname">routing_address</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#martinellis.cidr.CIDR.routing_address" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return an <a class="reference internal" href="../address/index.html#martinellis.address.Address" title="martinellis.address.Address"><code class="xref py py-class docutils literal"><span class="pre">martinellis.address.Address</span></code></a> object specified by the member
+variable <em>address_class</em> representing the routing address of the given network.
+Example:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">V4CIDR</span><span class="p">(</span><span class="n">cidr</span><span class="o">=</span><span class="s1">&#39;10.0.0.0/16&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">routing_address</span><span class="p">()</span>
+<span class="go">V4Address(10.0.0.0)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="martinellis.cidr.V4CIDR">
+<em class="property">class </em><code class="descclassname">martinellis.cidr.</code><code class="descname">V4CIDR</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#martinellis.cidr.V4CIDR" title="Permalink to this definition">¶</a></dt>
+<dd><p>A <a class="reference internal" href="#martinellis.cidr.CIDR" title="martinellis.cidr.CIDR"><code class="xref py py-class docutils literal"><span class="pre">martinellis.cidr.CIDR</span></code></a> class representing an IPv4 CIDR. See
+<a class="reference internal" href="#martinellis.cidr.CIDR" title="martinellis.cidr.CIDR"><code class="xref py py-class docutils literal"><span class="pre">martinellis.cidr.CIDR</span></code></a> for functionality.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="martinellis.cidr.V6CIDR">
+<em class="property">class </em><code class="descclassname">martinellis.cidr.</code><code class="descname">V6CIDR</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#martinellis.cidr.V6CIDR" title="Permalink to this definition">¶</a></dt>
+<dd><p>A <a class="reference internal" href="#martinellis.cidr.CIDR" title="martinellis.cidr.CIDR"><code class="xref py py-class docutils literal"><span class="pre">martinellis.cidr.CIDR</span></code></a> class representing an IPv6 CIDR. See
+<a class="reference internal" href="#martinellis.cidr.CIDR" title="martinellis.cidr.CIDR"><code class="xref py py-class docutils literal"><span class="pre">martinellis.cidr.CIDR</span></code></a> for functionality.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="cidrset-objects">
+<h2>2.2.2. CIDRSet objects<a class="headerlink" href="#cidrset-objects" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="martinellis.cidr.CIDRSet">
+<em class="property">class </em><code class="descclassname">martinellis.cidr.</code><code class="descname">CIDRSet</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#martinellis.cidr.CIDRSet" title="Permalink to this definition">¶</a></dt>
+<dd><p>A Python set object representing multiple networks. It&#8217;s capable of taking
+multiple large networks and creating a functional iterator out of them. An
+example:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cidr_set</span> <span class="o">=</span> <span class="n">CIDRSet</span><span class="p">(</span><span class="n">V4CIDR</span><span class="p">(</span><span class="n">cidr</span><span class="o">=</span><span class="s1">&#39;10.0.0.0/31&#39;</span><span class="p">),</span> <span class="n">V4CIDR</span><span class="p">(</span><span class="n">cidr</span><span class="o">=</span><span class="s1">&#39;10.0.0.50/31&#39;</span><span class="p">),</span> <span class="n">addresses</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="n">cidr_set</span><span class="p">)</span>
+<span class="go">[V4Address(10.0.0.50), V4Address(10.0.0.51), V4Address(10.0.0.0), V4Address(10.0.0.1)]</span>
+</pre></div>
+</div>
+<dl class="attribute">
+<dt id="martinellis.cidr.CIDRSet.ADDRESSES">
+<code class="descname">ADDRESSES</code><em class="property"> = False</em><a class="headerlink" href="#martinellis.cidr.CIDRSet.ADDRESSES" title="Permalink to this definition">¶</a></dt>
+<dd><p>Affects what type of value is returned on iteration. See
+<a class="reference internal" href="#martinellis.cidr.CIDR.__init__" title="martinellis.cidr.CIDR.__init__"><code class="xref py py-func docutils literal"><span class="pre">martinellis.cidr.CIDR.__init__()</span></code></a> for details.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="martinellis.cidr.CIDRSet.INCLUSIVE">
+<code class="descname">INCLUSIVE</code><em class="property"> = False</em><a class="headerlink" href="#martinellis.cidr.CIDRSet.INCLUSIVE" title="Permalink to this definition">¶</a></dt>
+<dd><p>Same effect as <a class="reference internal" href="#martinellis.cidr.CIDR.INCLUSIVE" title="martinellis.cidr.CIDR.INCLUSIVE"><code class="xref py py-attr docutils literal"><span class="pre">martinellis.cidr.CIDR.INCLUSIVE</span></code></a>.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="martinellis.cidr.CIDRSet.RANDOM">
+<code class="descname">RANDOM</code><em class="property"> = False</em><a class="headerlink" href="#martinellis.cidr.CIDRSet.RANDOM" title="Permalink to this definition">¶</a></dt>
+<dd><p>Same effect as <a class="reference internal" href="#martinellis.cidr.CIDR.RANDOM" title="martinellis.cidr.CIDR.RANDOM"><code class="xref py py-attr docutils literal"><span class="pre">martinellis.cidr.CIDR.RANDOM</span></code></a>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="martinellis.cidr.CIDRSet.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#martinellis.cidr.CIDRSet.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a <a class="reference internal" href="#martinellis.cidr.CIDRSet" title="martinellis.cidr.CIDRSet"><code class="xref py py-class docutils literal"><span class="pre">martinellis.cidr.CIDRSet</span></code></a> object. <em>args</em> offered
+to the constructor are interpretted as the dataset containing
+<a class="reference internal" href="#martinellis.cidr.CIDR" title="martinellis.cidr.CIDR"><code class="xref py py-class docutils literal"><span class="pre">martinellis.cidr.CIDR</span></code></a> objects. The available keyword arguments are:</p>
+<blockquote>
+<div><p><em>inclusive</em>: Mark whether the networks are inclusive. See
+<a class="reference internal" href="#martinellis.cidr.CIDR.__init__" title="martinellis.cidr.CIDR.__init__"><code class="xref py py-func docutils literal"><span class="pre">martinellis.cidr.CIDR.__init__()</span></code></a> for details.</p>
+<p><em>random</em>: Mark whether the networks returned are random.</p>
+<p><em>addresses</em>: If this argument is set to <strong>True</strong>, iteration over the set object
+will return <a class="reference internal" href="../address/index.html#martinellis.address.Address" title="martinellis.address.Address"><code class="xref py py-class docutils literal"><span class="pre">martinellis.address.Address</span></code></a> objects. Otherwise,
+iteration will return <a class="reference internal" href="#martinellis.cidr.CIDR" title="martinellis.cidr.CIDR"><code class="xref py py-class docutils literal"><span class="pre">martinellis.cidr.CIDR</span></code></a> objects.</p>
+</div></blockquote>
+</dd></dl>
+
+<dl class="method">
+<dt id="martinellis.cidr.CIDRSet.__iter__">
+<code class="descname">__iter__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#martinellis.cidr.CIDRSet.__iter__" title="Permalink to this definition">¶</a></dt>
+<dd><p>If <em>addresses</em> is set to <strong>True</strong>, return an iterator that iterates
+over the addresses contained in the networks. Otherwise, iterate over the networks
+themselves. If <em>random</em> is set to <strong>True</strong>, return a randomized version of the
+configuration.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="martinellis.cidr.CIDRSet.__lshift__">
+<code class="descname">__lshift__</code><span class="sig-paren">(</span><em>other</em><span class="sig-paren">)</span><a class="headerlink" href="#martinellis.cidr.CIDRSet.__lshift__" title="Permalink to this definition">¶</a></dt>
+<dd><p>If <em>other</em> is an <a class="reference internal" href="../address/index.html#martinellis.address.Address" title="martinellis.address.Address"><code class="xref py py-class docutils literal"><span class="pre">martinellis.address.Address</span></code></a> object, check
+if it is not a member of this set of networks. If <em>other</em> is a
+<a class="reference internal" href="#martinellis.cidr.CIDR" title="martinellis.cidr.CIDR"><code class="xref py py-class docutils literal"><span class="pre">martinellis.cidr.CIDR</span></code></a> object, check if this set is a subset of
+<em>other</em>. See <a class="reference internal" href="#martinellis.cidr.CIDRSet.is_subset_of" title="martinellis.cidr.CIDRSet.is_subset_of"><code class="xref py py-func docutils literal"><span class="pre">martinellis.cidr.CIDRSet.is_subset_of()</span></code></a>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="martinellis.cidr.CIDRSet.__rshift__">
+<code class="descname">__rshift__</code><span class="sig-paren">(</span><em>other</em><span class="sig-paren">)</span><a class="headerlink" href="#martinellis.cidr.CIDRSet.__rshift__" title="Permalink to this definition">¶</a></dt>
+<dd><p>If <em>other</em> is an <a class="reference internal" href="../address/index.html#martinellis.address.Address" title="martinellis.address.Address"><code class="xref py py-class docutils literal"><span class="pre">martinellis.address.Address</span></code></a> object, check
+if it is a member of this set of networks. If <em>other</em> is a
+<a class="reference internal" href="#martinellis.cidr.CIDR" title="martinellis.cidr.CIDR"><code class="xref py py-class docutils literal"><span class="pre">martinellis.cidr.CIDR</span></code></a> object, check if any network in this set is a
+superset of <em>other</em>. See <a class="reference internal" href="#martinellis.cidr.CIDRSet.is_superset_of" title="martinellis.cidr.CIDRSet.is_superset_of"><code class="xref py py-func docutils literal"><span class="pre">martinellis.cidr.CIDRSet.is_superset_of()</span></code></a>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="martinellis.cidr.CIDRSet.add">
+<code class="descname">add</code><span class="sig-paren">(</span><em>element</em><span class="sig-paren">)</span><a class="headerlink" href="#martinellis.cidr.CIDRSet.add" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a <a class="reference internal" href="#martinellis.cidr.CIDR" title="martinellis.cidr.CIDR"><code class="xref py py-class docutils literal"><span class="pre">martinellis.cidr.CIDR</span></code></a> object to this set.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="martinellis.cidr.CIDRSet.address_length">
+<code class="descname">address_length</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#martinellis.cidr.CIDRSet.address_length" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the number of addresses in this set.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="martinellis.cidr.CIDRSet.copy">
+<code class="descname">copy</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#martinellis.cidr.CIDRSet.copy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a copy of this object.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="martinellis.cidr.CIDRSet.discard">
+<code class="descname">discard</code><span class="sig-paren">(</span><em>element</em><span class="sig-paren">)</span><a class="headerlink" href="#martinellis.cidr.CIDRSet.discard" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove a <a class="reference internal" href="#martinellis.cidr.CIDR" title="martinellis.cidr.CIDR"><code class="xref py py-class docutils literal"><span class="pre">martinellis.cidr.CIDR</span></code></a> object from this set only if
+it is present.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="martinellis.cidr.CIDRSet.has_address">
+<code class="descname">has_address</code><span class="sig-paren">(</span><em>address_obj</em><span class="sig-paren">)</span><a class="headerlink" href="#martinellis.cidr.CIDRSet.has_address" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if any element in the set has a given
+<a class="reference internal" href="../address/index.html#martinellis.address.Address" title="martinellis.address.Address"><code class="xref py py-class docutils literal"><span class="pre">martinellis.address.Address</span></code></a> object. Essentially calls
+<a class="reference internal" href="#martinellis.cidr.CIDR.has_address" title="martinellis.cidr.CIDR.has_address"><code class="xref py py-func docutils literal"><span class="pre">martinellis.cidr.CIDR.has_address()</span></code></a> on each CIDR in the set.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="martinellis.cidr.CIDRSet.is_subset_of">
+<code class="descname">is_subset_of</code><span class="sig-paren">(</span><em>cidr_obj</em><span class="sig-paren">)</span><a class="headerlink" href="#martinellis.cidr.CIDRSet.is_subset_of" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if this set of networks is a subset of <em>cidr_obj</em>. Essentially
+calls <a class="reference internal" href="#martinellis.cidr.CIDR.is_subset_of" title="martinellis.cidr.CIDR.is_subset_of"><code class="xref py py-func docutils literal"><span class="pre">martinellis.cidr.CIDR.is_subset_of()</span></code></a> on each CIDR in the set.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="martinellis.cidr.CIDRSet.is_superset_of">
+<code class="descname">is_superset_of</code><span class="sig-paren">(</span><em>cidr_obj</em><span class="sig-paren">)</span><a class="headerlink" href="#martinellis.cidr.CIDRSet.is_superset_of" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if this set of networks is a superset of <em>cidr_obj</em>. Essentially
+calls <a class="reference internal" href="#martinellis.cidr.CIDR.is_superset_of" title="martinellis.cidr.CIDR.is_superset_of"><code class="xref py py-func docutils literal"><span class="pre">martinellis.cidr.CIDR.is_superset_of()</span></code></a> on each CIDR in the set.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="martinellis.cidr.CIDRSet.network_set">
+<code class="descname">network_set</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#martinellis.cidr.CIDRSet.network_set" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the set of networks that correspond to this 
+<a class="reference internal" href="#martinellis.cidr.CIDRSet" title="martinellis.cidr.CIDRSet"><code class="xref py py-class docutils literal"><span class="pre">martinellis.cidr.CIDRSet</span></code></a> object.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="martinellis.cidr.CIDRSet.remove">
+<code class="descname">remove</code><span class="sig-paren">(</span><em>element</em><span class="sig-paren">)</span><a class="headerlink" href="#martinellis.cidr.CIDRSet.remove" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove a <a class="reference internal" href="#martinellis.cidr.CIDR" title="martinellis.cidr.CIDR"><code class="xref py py-class docutils literal"><span class="pre">martinellis.cidr.CIDR</span></code></a> object from this set.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">2.2. CIDR module</a><ul>
+<li><a class="reference internal" href="#cidr-objects">2.2.1. CIDR objects</a></li>
+<li><a class="reference internal" href="#cidrset-objects">2.2.2. CIDRSet objects</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="../address/index.html"
+                        title="previous chapter">2.1. Address module</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../_sources/martinellis-root/cidr/index.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../address/index.html" title="2.1. Address module"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">martinellis 1.1.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >1. Martinellis package</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2017, frank2.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.3.
+    </div>
+  </body>
+</html>

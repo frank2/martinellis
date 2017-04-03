@@ -5,8 +5,9 @@ import os
 import random
 import re
 
-from . import address
-from . import randiter, xrandrange, xlongrange
+from hotmic import randiter, xrandrange
+
+from martinellis import address, xlongrange
 
 class CIDRError(Exception):
     '''
@@ -529,6 +530,11 @@ superset of *other*. See :py:func:`martinellis.cidr.CIDRSet.is_superset_of`.'''
         return self >> other
 
     def __iter__(self):
+        '''If *addresses* is set to **True**, return an iterator that iterates
+over the addresses contained in the networks. Otherwise, iterate over the networks
+themselves. If *random* is set to **True**, return a randomized version of the
+configuration.'''
+        
         networks = list(self.network_set())
         
         if self.random:

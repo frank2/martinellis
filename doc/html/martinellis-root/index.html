@@ -1,0 +1,150 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>1. Martinellis package &#8212; martinellis 1.1.0 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="2.1. Address module" href="address/index.html" />
+    <link rel="prev" title="Martinellis documentation" href="../index.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="address/index.html" title="2.1. Address module"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="../index.html" title="Martinellis documentation"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">martinellis 1.1.0 documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="martinellis-package">
+<h1>1. Martinellis package<a class="headerlink" href="#martinellis-package" title="Permalink to this headline">¶</a></h1>
+<p>The root of the Martinellis package comes with just a helper function to assist
+the functionality of the underlying modules. It&#8217;s not necessarily related to
+CIDR functionality, but is very helpful for creating a memory-safe iterator over
+large ranges such as IPv6!</p>
+<dl class="function">
+<dt id="martinellis.xlongrange">
+<code class="descclassname">martinellis.</code><code class="descname">xlongrange</code><span class="sig-paren">(</span><em>start=None</em>, <em>stop=None</em><span class="sig-paren">)</span><a class="headerlink" href="#martinellis.xlongrange" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a range iterator similar to xrange, but for large numbers. Works
+pretty much like the range() function, in that it generates a range from 
+0 -&gt; <em>start</em> non-inclusive if <em>stop</em> is not specified, or <em>start</em> -&gt; <em>stop</em>
+non-inclusive if it is.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="modules">
+<h1>2. Modules<a class="headerlink" href="#modules" title="Permalink to this headline">¶</a></h1>
+<p>The following module documentation is likely what you&#8217;re looking for!</p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="address/index.html">2.1. Address module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cidr/index.html">2.2. CIDR module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="cidr/index.html#cidr-objects">2.2.1. CIDR objects</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cidr/index.html#cidrset-objects">2.2.2. CIDRSet objects</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">1. Martinellis package</a></li>
+<li><a class="reference internal" href="#modules">2. Modules</a></li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="../index.html"
+                        title="previous chapter">Martinellis documentation</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="address/index.html"
+                        title="next chapter">2.1. Address module</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/martinellis-root/index.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="address/index.html" title="2.1. Address module"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="../index.html" title="Martinellis documentation"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">martinellis 1.1.0 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2017, frank2.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.3.
+    </div>
+  </body>
+</html>

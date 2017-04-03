@@ -137,7 +137,7 @@ Perform a binary AND operation on an IP address with either another
         '''
 Add an integer to the given IP address. Example::
 
-   >>> V4Address.from_string('10.20.30.40') + 5
+   >>> V4Address(value='10.20.30.40') + 5
    V4Address(10.20.30.45)
 
 
@@ -166,7 +166,7 @@ Add an integer to the given IP address. Example::
         '''
 Subtract an integer from the given IP address. Example::
 
-   >>> V4Address.from_string('10.20.30.40') - 5
+   >>> V4Address(value='10.20.30.40') - 5
    V4Address(10.20.30.35)
 
 
@@ -216,7 +216,6 @@ Creates an IP address from a given bitmask. Example::
 
    >>> V4Address.from_prefix(24)
    V4Address(255.255.255.0)
-
 
 '''
         
