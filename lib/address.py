@@ -58,7 +58,7 @@ Creates an address object. Keyword arguments are:
             
             self.value = addr_obj.value
             self.max = addr_obj.max
-        elif not isinstance(self.value, int):
+        elif not isinstance(self.value, (int, long)):
             raise AddressError('value must be an integer or string')
 
     def __int__(self):
