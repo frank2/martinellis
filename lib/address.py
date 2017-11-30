@@ -58,7 +58,7 @@ Creates an address object. Keyword arguments are:
             
             self.value = addr_obj.value
             self.max = addr_obj.max
-        elif not isinstance(self.value, int):
+        elif not float(self.value).is_integer():
             raise AddressError('value must be an integer or string')
 
     def __int__(self):
@@ -91,7 +91,7 @@ Perform a binary AND operation on an IP address with either another
 
 '''
 
-        if not isinstance(other, (Address, int)):
+        if not isinstance(other, Address) and not float(other).is_integer():
             raise AddressError('and operation must be performed on another address or an int')
 
         new_object = dict(list(self.__dict__.items())[:])
@@ -254,7 +254,11 @@ class V4Address(Address):
 
     @classmethod
     def from_string(cls, str_val):
-        struct_data = socket.inet_pton(socket.AF_INET, str_val)
+        try:
+            struct_data = socket.inet_pton(socket.AF_INET, str_val)
+        except (OSError, socket.error):
+            raise AddressError('inet_pton failed')
+
         int_data = struct.unpack('>L', struct_data)[0]
 
         return cls(value=int_data)
@@ -273,7 +277,11 @@ class V6Address(Address):
 
     @classmethod
     def from_string(cls, str_val):
-        struct_data = socket.inet_pton(socket.AF_INET6, str_val)
+        try:
+            struct_data = socket.inet_pton(socket.AF_INET6, str_val)
+        except (OSError, socket.error):
+            raise AddressError('inet_pton failed')
+
         int_data = struct.unpack('>QQ', struct_data)
         lhs, rhs = int_data
         return cls(value=lhs << 64 | rhs)
