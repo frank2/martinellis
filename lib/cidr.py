@@ -207,6 +207,27 @@ the given *cidr_obj*.'''
 the given *cidr_obj*.'''
 
         return cidr_obj.is_subset_of(self)
+
+    def random_address(self):
+        '''Return a random address contained within this subnet.'''
+
+        max_index = self.network_range() - int(not self.inclusive)
+        random_index = random.randint(1, max_index)
+        return self.get_address(random_index)
+
+    def random_subnet(self, prefix=None):
+        '''Return a random subnet that's a subset of this subnet.'''
+        if prefix is None:
+            prefix = random.randint(self.prefix, self.address.max - 1)
+        elif prefix <= self.prefix:
+            raise ValueError('target subnet would be too large to be contained in this subnet')
+
+        base_address = self.random_address()
+
+        return self.__class__(address=base_address
+                              ,prefix=prefix
+                              ,inclusive=self.inclusive
+                              ,random=self.random)
     
     def __str__(self):
         '''Return a string representation of the CIDR object.'''

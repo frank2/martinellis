@@ -53,12 +53,12 @@ Creates an address object. Keyword arguments are:
         if self.max is None:
             raise AddressError('a maximum bitrange must be provided')
 
-        if isinstance(self.value, (str, unicode)):
+        if isinstance(self.value, str):
             addr_obj = self.__class__.from_string(self.value)
             
             self.value = addr_obj.value
             self.max = addr_obj.max
-        elif not isinstance(self.value, (int, long)):
+        elif not isinstance(self.value, int):
             raise AddressError('value must be an integer or string')
 
     def __int__(self):
