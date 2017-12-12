@@ -4,7 +4,7 @@ from setuptools import setup
 
 setup(
     name = 'martinellis'
-    ,version = '1.2.6'
+    ,version = '1.2.7'
     ,author = 'frank2'
     ,author_email = 'frank2@dc949.org'
     ,description = 'A python library for manipulating IPv4 and IPv6 addresses.'
