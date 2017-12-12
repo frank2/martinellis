@@ -3,6 +3,8 @@
 import socket
 import struct
 
+from martinellis.compat import *
+
 class AddressError(Exception):
     '''
 A general error that's raised when errors occur inside :py:class:`Address` 
@@ -23,8 +25,6 @@ implemented::
 
    class V4Address(Address):
        MAX = 32
-
-
 '''
     
     MAX = None
@@ -53,7 +53,7 @@ Creates an address object. Keyword arguments are:
         if self.max is None:
             raise AddressError('a maximum bitrange must be provided')
 
-        if isinstance(self.value, str):
+        if isinstance(self.value, (str, unicode)):
             addr_obj = self.__class__.from_string(self.value)
             
             self.value = addr_obj.value
@@ -91,7 +91,7 @@ Perform a binary AND operation on an IP address with either another
 
 '''
 
-        if not isinstance(other, Address) and not float(other).is_integer():
+        if not isinstance(other, (Address, int, long)):
             raise AddressError('and operation must be performed on another address or an int')
 
         new_object = dict(list(self.__dict__.items())[:])
@@ -99,7 +99,7 @@ Perform a binary AND operation on an IP address with either another
         return self.__class__(**new_object)
 
     def __rand__(self, other):
-        if not isinstance(other, (Address, int)):
+        if not isinstance(other, (Address, int, long)):
             raise AddressError('and operation must be performed on another address or an int')
 
         new_object = dict(list(self.__dict__.items())[:])
@@ -114,7 +114,7 @@ Perform a binary AND operation on an IP address with either another
         '''Perform a binary OR operation on the address with an 
 :py:class:`Address` object or another integer.'''
         
-        if not isinstance(other, (Address, int)):
+        if not isinstance(other, (Address, int, long)):
             raise AddressError('or operation must be performed on another address or an int')
 
         new_object = dict(list(self.__dict__.items())[:])
@@ -122,7 +122,7 @@ Perform a binary AND operation on an IP address with either another
         return self.__class__(**new_object)
 
     def __ror__(self, other):
-        if not isinstance(other, (Address, int)):
+        if not isinstance(other, (Address, int, long)):
             raise AddressError('and operation must be performed on another address or an int')
 
         new_object = dict(list(self.__dict__.items())[:])
@@ -143,7 +143,7 @@ Add an integer to the given IP address. Example::
 
 '''
         
-        if not isinstance(other, int):
+        if not isinstance(other, (int, long)):
             raise AddressError('address objects can only be added with int objects')
 
         new_object = dict(list(self.__dict__.items())[:])
@@ -151,7 +151,7 @@ Add an integer to the given IP address. Example::
         return self.__class__(**new_object)
 
     def __radd__(self, other):
-        if not isinstance(other, int):
+        if not isinstance(other, (int, long)):
             raise AddressError('address objects can only be added with int objects')
 
         new_object = dict(list(self.__dict__.items())[:])
@@ -172,7 +172,7 @@ Subtract an integer from the given IP address. Example::
 
 '''
         
-        if not isinstance(other, int):
+        if not isinstance(other, (int, long)):
             raise AddressError('address objects can only be subtracted by int objects')
 
         new_object = dict(list(self.__dict__.items())[:])
@@ -180,7 +180,7 @@ Subtract an integer from the given IP address. Example::
         return self.__class__(**new_object)
 
     def __rsub__(self, other):
-        if not isinstance(other, int):
+        if not isinstance(other, (int, long)):
             raise AddressError('address objects can only be subtracted by int objects')
 
         new_object = dict(list(self.__dict__.items())[:])
@@ -234,6 +234,9 @@ Creates an IP address from a given bitmask. Example::
         '''Tries to convert the string address into either a 
 :py:class:`V4Address` or a :py:class:`V6Address`. Raises an exception if it
 can't convert to either.'''
+
+        if isinstance(address, Address):
+            return address
         
         try:
             return V4Address.from_string(address)

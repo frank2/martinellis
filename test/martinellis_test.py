@@ -8,7 +8,7 @@ class TestMartinellis(unittest.TestCase):
     def test_Address(self):
         self.assertEqual(Address.blind_assertion('127.0.0.1').value, 0x7f000001)
         self.assertEqual(Address.blind_assertion('::').value, 0)
-        self.assertEqual(Address.blind_assertion('7f00::1').value, 0x7f000000000000000000000000000001L)
+        self.assertEqual(Address.blind_assertion('7f00::1').value, 0x7f000000000000000000000000000001)
     
     def test_CIDR(self):
         pass

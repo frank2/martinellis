@@ -8,6 +8,7 @@ import re
 from hotmic import randiter, xrandrange
 
 from martinellis import address, xlongrange
+from martinellis.compat import *
 
 class CIDRError(Exception):
     '''
@@ -103,7 +104,7 @@ Creates a CIDR object. Keyword arguments are:
         if self.address is None:
             raise CIDRError('no base address provided')
         
-        if isinstance(self.address, str):
+        if isinstance(self.address, (str, unicode)):
             self.address = self.address_class.from_string(self.address)
 
         if not isinstance(self.address, self.address_class):
@@ -112,7 +113,7 @@ Creates a CIDR object. Keyword arguments are:
         if self.prefix is None:
             raise CIDRError('no network prefix provided')
 
-        if not isinstance(self.prefix, int):
+        if not isinstance(self.prefix, (int, long)):
             raise CIDRError('prefix must be an integer')
 
     def netmask(self):
@@ -228,6 +229,11 @@ the given *cidr_obj*.'''
                               ,prefix=prefix
                               ,inclusive=self.inclusive
                               ,random=self.random)
+
+    def length(self):
+        '''Count how many addresses are in this object.'''
+        
+        return self.network_range() - (int(not self.inclusive) * 2)
     
     def __str__(self):
         '''Return a string representation of the CIDR object.'''
@@ -284,7 +290,7 @@ of the network.'''
     def __len__(self):
         '''Count how many addresses are in this object.'''
         
-        return self.network_range() - (int(not self.inclusive) * 2)
+        return self.length()
 
     def __getitem__(self, index):
         '''Calls :py:func:`martinellis.cidr.CIDR.get_address`.'''
@@ -367,6 +373,9 @@ object.'''
         '''Tries to convert the string into either a
 :py:class:`martinellis.cidr.V4CIDR` or a :py:class:`martinellis.cidr.V6CIDR`.
 Raises an exception if it can't convert to either.'''
+
+        if isinstance(cidr, CIDR):
+            return cidr
         
         try:
             return V4CIDR.from_string(cidr)
@@ -435,7 +444,7 @@ to the constructor are interpretted as the dataset containing
     def address_length(self):
         '''Return the number of addresses in this set.'''
         
-        return sum(map(len, self.network_set()))
+        return sum(map(CIDR.length, self.network_set()))
 
     def network_set(self):
         '''Return the set of networks that correspond to this 
