@@ -234,6 +234,9 @@ Creates an IP address from a given bitmask. Example::
         '''Tries to convert the string address into either a 
 :py:class:`V4Address` or a :py:class:`V6Address`. Raises an exception if it
 can't convert to either.'''
+
+        if isinstance(address, Address):
+            return address
         
         try:
             return V4Address.from_string(address)

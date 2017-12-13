@@ -162,7 +162,7 @@ Example::
         '''Treat the network like an array and get the address at offset *index*.'''
         
         if index < int(not self.inclusive) or index > self.network_range() - int(not self.inclusive):
-            raise IndexError('index out of range of network')
+            raise IndexError('index {} out of range of network'.format(index))
 
         return self.routing_address() + index
 
@@ -229,6 +229,11 @@ the given *cidr_obj*.'''
                               ,inclusive=self.inclusive
                               ,random=self.random)
     
+    def length(self):
+        '''Count how many addresses are in this object.'''
+        
+        return self.network_range() - (int(not self.inclusive) * 2)
+
     def __str__(self):
         '''Return a string representation of the CIDR object.'''
         
@@ -281,11 +286,6 @@ of the network.'''
     def __rlshift__(self, other):
         return self >> other
         
-    def __len__(self):
-        '''Count how many addresses are in this object.'''
-        
-        return self.network_range() - (int(not self.inclusive) * 2)
-
     def __getitem__(self, index):
         '''Calls :py:func:`martinellis.cidr.CIDR.get_address`.'''
         
@@ -313,6 +313,9 @@ affected by the *random* and *inclusive* switches given to
 
         for address_obj in addresses:
             yield self[address_obj]
+
+    def __len__(self):
+        return self.length()
 
     def __contains__(self, element):
         '''Check if the *element* is either an address in the network or a subset
@@ -367,6 +370,9 @@ object.'''
         '''Tries to convert the string into either a
 :py:class:`martinellis.cidr.V4CIDR` or a :py:class:`martinellis.cidr.V6CIDR`.
 Raises an exception if it can't convert to either.'''
+
+        if isinstance(cidr, CIDR):
+            return cidr
         
         try:
             return V4CIDR.from_string(cidr)
